@@ -241,6 +241,61 @@ class Solution {
 
 Had to re-write. Need to think more ahead of time. Maybe this needs recursion?
 
+\subsection{zigzag-conversion} 
+\subsubsection{https://leetcode.com/problems/zigzag-conversion}
+\begin{lstlisting}[language=Java]
+import java.util.*;
+class Solution {
+  public String convert(String s, int numRows) {
+    if(numRows == 1 || s.length() <= numRows ) return s;
+    int numColumns = (s.length() / 2) +1;
+    if (numRows > numColumns) {
+      numColumns = numRows +1;
+    }
+    String[][] table = make2dTable(s, numRows, numColumns);
+    StringBuilder sb = new StringBuilder();
+        
+    for (int row = 0; row < table.length; row++) {
+      for (int col = 0; col < table[row].length; col++) {
+        String value = table[row][col];
+        if (value != null) {
+          sb.append(value);
+        }
+      }
+    }
+    return sb.toString();
+  }
+    
+  private String[][] make2dTable(String s, int numRows, int numColumns) {
+    String[][] table = new String[numRows][numColumns];
+    char[] chArr = s.toCharArray();
+    int row = 0;
+    int column = 0;
+    boolean down = true;
+    for (char c : chArr) {
+      table[row][column] = c + "";
+      if (down) {
+        row++;
+        if (row == numRows) {
+          row -=2;
+          column++;
+          if (row != 0) {
+            down = false;
+          }
+        }
+      } else {
+        row--;
+        column++;
+        if (row == 0) {
+          down = true;
+        }
+      }
+    }
+  return table;
+  }   
+}
+\end{lstlisting}
+What a hack!
 
 \end{document}
 
