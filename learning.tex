@@ -297,6 +297,100 @@ class Solution {
 \end{lstlisting}
 What a hack!
 
+\begin{lstlisting}[language=Java]
+public String convert(String s, int nRows) {
+    char[] c = s.toCharArray();
+    int len = c.length;
+    StringBuffer[] sb = new StringBuffer[nRows];
+    for (int i = 0; i < sb.length; i++) sb[i] = new StringBuffer();
+    
+    int i = 0;
+    while (i < len) {
+        for (int idx = 0; idx < nRows && i < len; idx++) // vertically down
+            sb[idx].append(c[i++]);
+        for (int idx = nRows-2; idx >= 1 && i < len; idx--) // obliquely up
+            sb[idx].append(c[i++]);
+    }
+    for (int idx = 1; idx < sb.length; idx++)
+        sb[0].append(sb[idx]);
+    return sb[0].toString();
+}
+\end{lstlisting}
+Shorter version
+
+\subsection{median-of-two-sorted-arrays} 
+\subsubsection{https://leetcode.com/problems/median-of-two-sorted-arrays}
+\begin{lstlisting}[language=Java]
+
+class Solution {
+  public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+    int targetIndex = 0;
+    double[] merged;
+    if (nums1.length + nums2.length == 0) {
+      return 0.0;
+    } else if (nums1.length == 0) {
+      merged = new double[nums2.length];
+      targetIndex = merged.length / 2;
+      for(int i=0; i<=targetIndex; i++) {
+        merged[i] = nums2[i];
+      }
+    } else if (nums2.length == 0 ) {
+      merged = new double[nums1.length];
+      targetIndex = merged.length / 2;
+      for(int i=0; i<=targetIndex; i++) {
+        merged[i] = nums1[i];
+      }
+    } else {
+      merged = new double[nums1.length + nums2.length];
+      targetIndex = merged.length / 2;
+      int x = 0;
+      int y = 0;
+      int mergedIndex = 0;
+
+      while(true) {
+        if (nums1[x] < nums2[y]) {
+          merged[mergedIndex] = nums1[x];
+          x++;
+          if (x == nums1.length) {
+            mergedIndex++;
+            while(mergedIndex <= targetIndex) {
+              merged[mergedIndex] = nums2[y];
+              mergedIndex++;
+              y++;
+            }
+            break;
+          }
+        } else {
+          merged[mergedIndex] = nums2[y];
+          y++;
+          if (y == nums2.length) {
+            mergedIndex++;
+            while(mergedIndex <= targetIndex) {
+              merged[mergedIndex] = nums1[x];
+              mergedIndex++;
+              x++;
+            }
+            break;
+          }
+        }
+        mergedIndex++;
+      }
+    }
+    if (merged.length == 1) {
+      return merged[0];
+    }
+    boolean even = merged.length % 2 == 0;
+    if (even) {
+      return (merged[targetIndex] + merged[targetIndex - 1 ])/2;
+    } else {
+      return merged[targetIndex];
+    }
+  }
+}
+\end{lstlisting}
+
+This is more of an excercise of juggling indexes in your mind.
+
 \end{document}
 
 
