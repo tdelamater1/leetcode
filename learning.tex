@@ -424,6 +424,120 @@ class Solution {
 \end{lstlisting}
 
 This is more of an excercise of juggling indexes in your mind.
+Looking back this looks like a sliding window problem.
+
+\subsection{nearest-exit-from-entrance-in-maze} 
+\subsubsection{https://leetcode.com/problems/nearest-exit-from-entrance-in-maze}
+\begin{lstlisting}[language=Java]
+import java.util.Queue;
+import java.util.LinkedList;
+class Solution {
+  int column = 0;
+  int row = 0;
+  public int nearestExit(char[][] maze, int[] entrance) {
+    row = maze.length;
+    column = maze[0].length;
+    int[][] visited = new int[row][column];
+    Queue<int[]> q = new LinkedList<>();
+    q.add(new int[]{entrance[0], entrance[1], 0});
+    int[] currentNode;
+    int x, y;
+    int distance = 0;
+
+    while (q.size() > 0) {
+      currentNode = q.remove();
+      x = currentNode[0];
+      y = currentNode[1];
+      distance = currentNode[2];
+      visited[x][y] = 1;
+      if (maze[x][y] == '.' && (x == 0 || y == 0 || x == row-1 || y == column-1) && distance > 0) {
+        if (!(entrance[0] == x && entrance[1] == y)) {
+          return distance;
+        }
+      }
+      if (inBounds(x-1, y)) {
+        if (maze[x-1][y] == '.' && visited[x-1][y] == 0) {
+          q.add(new int[]{x-1,y,distance+1});
+        }
+      }
+      if (inBounds(x+1, y)) {
+        if (maze[x+1][y] == '.' && visited[x+1][y] == 0) {
+          q.add(new int[]{x+1,y,distance+1});
+        }
+      }
+      if (inBounds(x, y-1)) {
+        if (maze[x][y-1] == '.' && visited[x][y-1] == 0) {
+          q.add(new int[]{x,y-1,distance+1});
+        }
+      }
+      if (inBounds(x, y+1)) {
+        if (maze[x][y+1] == '.' && visited[x][y+1] == 0) {
+          q.add(new int[]{x,y+1,distance+1});
+        }
+      }
+    }
+    return -1;
+  }
+
+  private boolean inBounds(int x, int y) {
+    return x >= 0 && x < row && y >= 0 && y < column;
+  }
+}
+\end{lstlisting}
+
+This was my best solution using BFS but it went over time.
+
+\begin{lstlisting}[language=Java]
+class Solution {
+  public int nearestExit(char[][] maze, int[] entrance) {
+    int rows = maze.length, cols = maze[0].length;
+    int[][] dirs = new int[][]{{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    
+    // Mark the entrance as visited since its not a exit.
+    int startRow = entrance[0], startCol = entrance[1];
+    maze[startRow][startCol] = '+';
+    
+    // Start BFS from the entrance, and use a queue `queue` to store all 
+    // the cells to be visited.
+    Queue<int[]> queue = new LinkedList<>();
+    queue.offer(new int[]{startRow, startCol, 0});
+    
+    while (!queue.isEmpty()) {
+      int[] currState = queue.poll();
+      int currRow = currState[0], currCol = currState[1], currDistance = currState[2];
+
+      // For the current cell, check its four neighbor cells.
+      for (int[] dir : dirs) {
+        int nextRow = currRow + dir[0], nextCol = currCol + dir[1];
+
+        // If there exists an unvisited empty neighbor:
+        if (0 <= nextRow && nextRow < rows && 0 <= nextCol && nextCol < cols
+           && maze[nextRow][nextCol] == '.') {
+          
+          // If this empty cell is an exit, return distance + 1.
+          if (nextRow == 0 || nextRow == rows - 1 || nextCol == 0 || nextCol == cols - 1)
+            return currDistance + 1;
+          
+          // Otherwise, add this cell to 'queue' and mark it as visited.
+          maze[nextRow][nextCol] = '+';
+          queue.offer(new int[]{nextRow, nextCol, currDistance + 1});
+        }  
+      }
+    }
+
+    // If we finish iterating without finding an exit, return -1.
+    return -1;
+  }
+}
+\end{lstlisting}
+
+This is the instructive answer. Notice the following: 
+
+\begin{itemize}
+  \item It checks if found not for the item pulled from the queue, but before putting the item on the queue. 
+  \item It modifies the input matrix instead of keeping a matrix of visted nodes.
+\end{itemize}
+
 
 \end{document}
 
