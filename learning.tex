@@ -388,6 +388,40 @@ class Solution {
   }
 }
 \end{lstlisting}
+\subsection{longest-substring-without-repeating-characters} 
+\subsubsection{https://leetcode.com/problems/longest-substring-without-repeating-characters}
+\begin{lstlisting}[language=Java]
+import java.util.HashSet;
+import java.util.Set;
+class Solution {
+  public int lengthOfLongestSubstring(String s) {
+    if (s == null || "".equals(s)) {
+      return 0;
+    } else if (s.length() == 1) {
+      return 1;
+    } else {
+      int i = 0;
+      int j = 0;
+      int longestSubstring = 0;
+      Set<Character> characterSet = new HashSet<>();
+      char[] characters = s.toCharArray();
+      for (char c : characters) {
+        while (characterSet.contains(c)) {
+          characterSet.remove(characters[j]);
+          j++;
+        }
+        characterSet.add(c);
+        i++;
+        if (i - j > longestSubstring) {
+          int val = i - j;
+          longestSubstring = i - j;
+        }
+      }
+      return longestSubstring;
+    }
+  }
+}
+\end{lstlisting}
 
 This is more of an excercise of juggling indexes in your mind.
 
